@@ -41,12 +41,7 @@ const Header = () => {
             >
               Prenotazioni
             </Link>
-            <Link 
-              to="/devices" 
-              className={`transition-smooth hover:text-primary ${isActive('/devices') ? 'text-primary' : ''}`}
-            >
-              Dispositivi
-            </Link>
+           
           </nav>
 
           <div className="flex items-center space-x-3">

@@ -137,9 +137,7 @@ const Bookings = () => {
           })}
         </div>
 
-        <p className="text-sm text-muted-foreground">
-          Nota: questa è una demo statica. Per prenotazioni reali e stato in tempo reale, collega Supabase e (opzionale) WebSocket.
-        </p>
+        
       </div>
     </Layout>
   );
