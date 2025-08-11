@@ -1,5 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Headphones, User, Menu } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -58,9 +59,39 @@ const Header = () => {
             <Button variant="hero" size="sm" asChild>
               <Link to="/register">Registrati</Link>
             </Button>
-            <Button variant="ghost" size="icon" className="md:hidden">
-              <Menu className="w-5 h-5" />
-            </Button>
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" className="md:hidden" aria-label="Apri menu">
+                  <Menu className="w-5 h-5" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="vr-glass border-white/10">
+                <SheetHeader>
+                  <SheetTitle>Menu</SheetTitle>
+                </SheetHeader>
+                <nav className="mt-6 grid gap-2">
+                  <Button variant="glass" asChild>
+                    <Link to="/">Home</Link>
+                  </Button>
+                  <Button variant="glass" asChild>
+                    <Link to="/tours">Tours</Link>
+                  </Button>
+                  <Button variant="glass" asChild>
+                    <Link to="/bookings">Prenotazioni</Link>
+                  </Button>
+                  <Button variant="glass" asChild>
+                    <Link to="/devices">Dispositivi</Link>
+                  </Button>
+                  <div className="h-px bg-border my-2" />
+                  <Button variant="hero" asChild>
+                    <Link to="/register">Registrati</Link>
+                  </Button>
+                  <Button variant="outline" asChild>
+                    <Link to="/login">Login</Link>
+                  </Button>
+                </nav>
+              </SheetContent>
+            </Sheet>
           </div>
         </div>
       </div>
