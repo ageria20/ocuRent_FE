@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Clock, Star, Users, Eye } from 'lucide-react';
 import { Tour } from '@/store/slices/toursSlice';
 import { Link } from 'react-router-dom';
+import BookingDialog from '@/components/bookings/BookingDialog';
 
 interface TourCardProps {
   tour: Tour;
@@ -93,11 +94,7 @@ const TourCard = ({ tour, index }: TourCardProps) => {
               Anteprima
             </Link>
           </Button>
-          <Button variant="hero" size="sm" className="flex-1" asChild>
-            <Link to={`/book/${tour.id}`}>
-              Prenota Ora
-            </Link>
-          </Button>
+          <BookingDialog tour={tour} />
         </CardFooter>
       </Card>
     </motion.div>
