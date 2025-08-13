@@ -1,4 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import tourRome from '@/assets/tour-rome.jpg';
+import tourOcean from '@/assets/tour-ocean.jpg';
+import tourSpace from '@/assets/tour-space.jpg';
 
 export interface Tour {
   id: string;
@@ -30,7 +33,7 @@ const mockTours: Tour[] = [
     duration: 45,
     price: 29.99,
     category: 'historical',
-    image: '/src/assets/tour-rome.jpg',
+    image: tourRome,
     isActive: true,
     features: ['360° Video', 'Interactive Hotspots', 'Audio Guide', 'Historical Facts'],
     rating: 4.8,
@@ -43,7 +46,7 @@ const mockTours: Tour[] = [
     duration: 35,
     price: 24.99,
     category: 'underwater',
-    image: '/src/assets/tour-ocean.jpg',
+    image: tourOcean,
     isActive: true,
     features: ['Underwater 360°', 'Marine Life Database', 'Ocean Sounds', 'Educational Content'],
     rating: 4.9,
@@ -56,7 +59,7 @@ const mockTours: Tour[] = [
     duration: 50,
     price: 39.99,
     category: 'space',
-    image: '/src/assets/tour-space.jpg',
+    image: tourSpace,
     isActive: true,
     features: ['Zero-G Simulation', 'Earth Views', 'Astronaut Commentary', 'Space Facts'],
     rating: 5.0,
