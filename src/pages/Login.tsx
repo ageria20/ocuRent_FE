@@ -15,6 +15,11 @@ const Login = () => {
     password: ''
   });
 
+  const doLogin = () => {
+   
+    console.log('Login attempt:', formData);
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Login logic will be implemented with Supabase
