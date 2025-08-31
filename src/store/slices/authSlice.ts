@@ -16,7 +16,7 @@ interface AuthState {
 
 const initialState: AuthState = {
   user: null,
-  token: localStorage.getItem('vr-tour-token'),
+  token: localStorage.getItem('accessToken'),
   isAuthenticated: false,
   loading: false,
 };
@@ -33,7 +33,7 @@ const authSlice = createSlice({
       state.user = action.payload.user;
       state.token = action.payload.token;
       state.isAuthenticated = true;
-      localStorage.setItem('vr-tour-token', action.payload.token);
+      localStorage.setItem('accessToken', action.payload.token);
     },
     loginFailure: (state) => {
       state.loading = false;
@@ -45,10 +45,17 @@ const authSlice = createSlice({
       state.user = null;
       state.token = null;
       state.isAuthenticated = false;
-      localStorage.removeItem('vr-tour-token');
+      localStorage.removeItem('accessToken');
+    },
+    initializeAuth: (state) => {
+      const token = localStorage.getItem('accessToken');
+      if (token) {
+        state.token = token;
+        state.isAuthenticated = true;
+      }
     },
   },
 });
 
-export const { loginStart, loginSuccess, loginFailure, logout } = authSlice.actions;
+export const { loginStart, loginSuccess, loginFailure, logout, initializeAuth } = authSlice.actions;
 export default authSlice.reducer;

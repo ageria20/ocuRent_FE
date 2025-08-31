@@ -4,33 +4,74 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
-import { useEffect } from "react";
+import { useEffect, useState, FormEvent } from "react";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 
 interface RegisterFormValues {
   name: string;
+  surname: string;
   email: string;
   password: string;
   confirm: string;
 }
 
 const Register = () => {
-  const { register, handleSubmit, watch, formState: { errors } } = useForm<RegisterFormValues>();
-  const { toast } = useToast();
+     const { register, watch, formState: { errors } } = useForm<RegisterFormValues>();
+    const [showPassword, setShwPassword] = useState(false)
+    const [isOk, setIsOk] = useState(false)
+    const [isLoading, setIsLoading] = useState(false)
 
-  useEffect(() => {
-    document.title = "Registrazione | VR Tours";
-    const desc = document.querySelector('meta[name="description"]');
-    const content = "Crea un account VR Tours per prenotare esperienze immersive.";
-    if (desc) desc.setAttribute("content", content);
-  }, []);
-
-  const onSubmit = (data: RegisterFormValues) => {
-    toast({ title: "Registrazione completata (demo)", description: "Collega Supabase per abilitare la registrazione reale." });
-  };
+const [user, setUser] = useState({
+  name: "",
+  surname: "",
+  telephone: "",
+  email: "",
+  password: ""
+})
 
   const password = watch("password");
+const handleSubmit = async (e: FormEvent<HTMLFormElement>) =>{
+  e.preventDefault()
+
+  try{
+    setIsLoading(true)
+    const resp = await fetch(`http://localhost:8085/api/auth/register`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(user)
+    });
+    if(resp.ok){
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      
+      setIsOk(true)
+      setUser({
+        name: "",
+        surname: "",
+        telephone: "",
+        email: "",
+        password: ""
+      })
+
+    }
+  } catch (error) {
+    console.log("Errore nella registrazione!")
+    console.log(error);
+    
+  } finally {
+    console.log("Registrazione effettuata!")
+    setIsLoading(false)
+  }
+}
+
+const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  setUser({...user, [e.target.name]: e.target.value})
+}
+const toggleShowPassword = () => {
+    setShwPassword(!showPassword)
+}
 
   return (
     <Layout>
@@ -46,25 +87,30 @@ const Register = () => {
               <CardDescription>Registrati per gestire prenotazioni e dispositivi.</CardDescription>
             </CardHeader>
             <CardContent>
-              <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+              <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="name">Nome</Label>
-                  <Input id="name" placeholder="Il tuo nome" {...register("name", { required: true })} />
-                  {errors.name && <p className="text-sm text-destructive">Il nome è obbligatorio</p>}
+                  <Input name="name" placeholder="Il tuo nome" value={user.name} onChange={handleChange} required/>
+                  
+                </div>
+                 <div className="space-y-2">
+                  <Label htmlFor="name">Cognome</Label>
+                  <Input name="surname" placeholder="Il tuo cognome" value={user.surname} onChange={handleChange} required/>
+                  {errors.surname && <p className="text-sm text-destructive">Il cognome è obbligatorio</p>}
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
-                  <Input id="email" type="email" placeholder="tu@esempio.com" {...register("email", { required: true })} />
+                  <Input name="email" type="email" placeholder="tu@esempio.com" required value={user.email} onChange={handleChange} />
                   {errors.email && <p className="text-sm text-destructive">L'email è obbligatoria</p>}
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="password">Password</Label>
-                  <Input id="password" type="password" {...register("password", { required: true, minLength: 6 })} />
+                  <Input name="password" type="password" required value={user.password} onChange={handleChange}/>
                   {errors.password && <p className="text-sm text-destructive">Minimo 6 caratteri</p>}
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="confirm">Conferma password</Label>
-                  <Input id="confirm" type="password" {...register("confirm", { required: true, validate: (v) => v === password })} />
+                  <Input name="confirm" type="password" {...register("confirm", { required: true, validate: (v) => v === password })} />
                   {errors.confirm && <p className="text-sm text-destructive">Le password non coincidono</p>}
                 </div>
                 <Button type="submit" className="w-full" variant="hero">Registrati</Button>

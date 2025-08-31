@@ -1,30 +1,83 @@
 import { motion } from 'framer-motion';
-import { useState } from 'react';
+import { FormEvent,useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Eye, EyeOff, Mail, Lock, Headphones } from 'lucide-react';
+import { useNavigate} from 'react-router-dom'
 import Layout from '@/components/layout/Layout';
+import { useAppDispatch } from '../store/store'
+import { loginSuccess } from '@/store/slices/authSlice';
 
 const Login = () => {
-  const [showPassword, setShowPassword] = useState(false);
-  const [formData, setFormData] = useState({
-    email: '',
-    password: ''
-  });
+const [showPassword, setShowPassword] = useState(false)
+const [isLoading, setIsLoading] = useState<boolean>(false)
+const [token, setToken] = useState("")
+const navigate = useNavigate()
+const dispatch = useAppDispatch()
 
-  const doLogin = () => {
+
+const [user, setUser] = useState({
+  email: "",
+  password: ""
+})
+
+const toggleShowPassword = () => {
+    setShowPassword(!showPassword)
+}
+
+const handleSubmit = async (e: FormEvent<HTMLFormElement>) =>{
+  e.preventDefault()
+
+  try{
+    setIsLoading(true)
+    const resp = await fetch(`http://localhost:8085/api/auth/user-login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(user)
+    });
+          if(resp.ok){
+        const res = await resp.json()
+        console.log('Login response:', res) // Debug
+        localStorage.setItem("accessToken", res.accessToken)
+        setToken(res.accessToken)
+        
+        // Salva i dati dell'utente nel Redux store
+        dispatch(loginSuccess({ user: res.user, token: res.accessToken }))
+        
+        // Reindirizza in base al ruolo dell'utente
+        if (res.user && res.user.role === 'admin') {
+          console.log('User is admin, redirecting to admin dashboard') // Debug
+          navigate("/admin")
+        } else {
+          console.log('User is not admin, redirecting to bookings') // Debug
+          navigate("/bookings")
+        }
+      } else {
+      if(resp.status === 401){
+        navigate("/")
+    }
+  }
+  } catch (error) {
+    console.log(error);
+    
+  } finally{
+    setIsLoading(false)
+  }
+}
+
    
-    console.log('Login attempt:', formData);
-  };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Login logic will be implemented with Supabase
-    console.log('Login attempt:', formData);
-  };
+
+
+const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  setUser({...user, [e.target.name]: e.target.value})
+}
+
 
   return (
     <Layout>
@@ -60,8 +113,8 @@ const Login = () => {
                       id="email"
                       type="email"
                       placeholder="nome@esempio.com"
-                      value={formData.email}
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      value={user.email}
+                      onChange={(e) => setUser({ ...user, email: e.target.value })}
                       className="pl-10 vr-glass border-white/20"
                       required
                     />
@@ -76,8 +129,8 @@ const Login = () => {
                       id="password"
                       type={showPassword ? 'text' : 'password'}
                       placeholder="La tua password"
-                      value={formData.password}
-                      onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                      value={user.password}
+                      onChange={(e) => setUser({ ...user, password: e.target.value })}
                       className="pl-10 pr-10 vr-glass border-white/20"
                       required
                     />
