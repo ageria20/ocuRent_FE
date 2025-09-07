@@ -21,7 +21,7 @@ Questo documento descrive tutti gli endpoint API che il backend deve implementar
     "id": "string",
     "email": "string",
     "name": "string",
-    "role": "user" | "admin"
+    "role": "USER" | "ADMIN"
   }
 }
 ```
@@ -36,7 +36,7 @@ Questo documento descrive tutti gli endpoint API che il backend deve implementar
     "id": "string",
     "email": "string",
     "name": "string",
-    "role": "user" | "admin"
+    "role": "USER" | "ADMIN"
   }
 }
 ```

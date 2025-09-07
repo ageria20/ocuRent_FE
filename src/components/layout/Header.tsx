@@ -13,12 +13,9 @@ const Header = () => {
   const authState = useSelector((state: RootState) => state.auth);
   const { isAuthenticated, user } = authState;
 
-  console.log('Header - authState:', authState); // Debug
-
   const isActive = (path: string) => location.pathname === path;
 
   const handleLogout = () => {
-    console.log('Logout clicked'); // Debug
     dispatch(logout());
   };
 
@@ -58,15 +55,9 @@ const Header = () => {
           </nav>
 
           <div className="flex items-center space-x-3">
-            {/* Debug info */}
-            <div className="text-xs text-white mr-2">
-              Auth: {isAuthenticated ? 'Yes' : 'No'} | 
-              User: {user ? user.role : 'None'}
-            </div>
-            
             {isAuthenticated ? (
               <>
-                {user?.role === 'admin' && (
+                {user?.role === 'ADMIN' && (
                   <Button variant="glass" size="sm" asChild>
                     <Link to="/admin">
                       <Settings className="w-4 h-4 mr-2" />
@@ -87,12 +78,7 @@ const Header = () => {
               </>
             ) : (
               <>
-                <Button 
-                  variant="glass" 
-                  size="sm" 
-                  onClick={() => console.log('Login button clicked')}
-                  asChild
-                >
+                <Button variant="glass" size="sm" asChild>
                   <Link to="/login">
                     <User className="w-4 h-4 mr-2" />
                     Login
@@ -125,7 +111,7 @@ const Header = () => {
                       <Button variant="glass" asChild>
                         <Link to="/bookings">Prenotazioni</Link>
                       </Button>
-                      {user?.role === 'admin' && (
+                      {user?.role === 'ADMIN' && (
                         <Button variant="glass" asChild>
                           <Link to="/admin">Admin Dashboard</Link>
                         </Button>

@@ -42,7 +42,6 @@ const handleSubmit = async (e: FormEvent<HTMLFormElement>) =>{
     });
           if(resp.ok){
         const res = await resp.json()
-        console.log('Login response:', res) // Debug
         localStorage.setItem("accessToken", res.accessToken)
         setToken(res.accessToken)
         
@@ -50,11 +49,9 @@ const handleSubmit = async (e: FormEvent<HTMLFormElement>) =>{
         dispatch(loginSuccess({ user: res.user, token: res.accessToken }))
         
         // Reindirizza in base al ruolo dell'utente
-        if (res.user && res.user.role === 'admin') {
-          console.log('User is admin, redirecting to admin dashboard') // Debug
+        if (res.user && res.user.role === 'ADMIN') {
           navigate("/admin")
         } else {
-          console.log('User is not admin, redirecting to bookings') // Debug
           navigate("/bookings")
         }
       } else {

@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { useParams, Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
@@ -14,13 +15,19 @@ import {
   Calendar,
   Headphones,
   Globe,
-  Volume2
+  Volume2,
+  Video,
+  Image as ImageIcon,
+  X
 } from 'lucide-react';
 import Layout from '@/components/layout/Layout';
 import { RootState } from '@/store/store';
 
 const TourDetail = () => {
   const { id } = useParams();
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [showVideo, setShowVideo] = useState(false);
+  
   const tour = useSelector((state: RootState) => 
     state.tours.tours.find(t => t.id === id)
   );
@@ -74,7 +81,8 @@ const TourDetail = () => {
               <img 
                 src={tour.image} 
                 alt={tour.title}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover cursor-pointer"
+                onClick={() => setSelectedImage(tour.image)}
               />
               <div className="absolute inset-0 vr-gradient opacity-20" />
               <div className="absolute top-6 left-6">
@@ -83,18 +91,47 @@ const TourDetail = () => {
                 </Badge>
               </div>
               <div className="absolute inset-0 flex items-center justify-center">
-                <Button size="lg" variant="glass" className="p-6 rounded-full">
+                <Button 
+                  size="lg" 
+                  variant="glass" 
+                  className="p-6 rounded-full"
+                  onClick={() => setShowVideo(true)}                  
+                >
                   <Play className="w-8 h-8" />
                 </Button>
               </div>
             </div>
 
+            {/* Gallery */}
             <div className="grid grid-cols-3 gap-4">
-              {/* Additional preview images would go here */}
-              <div className="tour-360-container rounded-xl h-24 bg-muted"></div>
-              <div className="tour-360-container rounded-xl h-24 bg-muted"></div>
-              <div className="tour-360-container rounded-xl h-24 bg-muted"></div>
+              {tour.gallery.map((image, index) => (
+                <div 
+                  key={index}
+                  className="tour-360-container rounded-xl h-24 bg-muted overflow-hidden cursor-pointer hover:scale-105 transition-transform"
+                  onClick={() => setSelectedImage(image)}
+                >
+                  <img 
+                    src={image} 
+                    alt={`${tour.title} - Immagine ${index + 1}`}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              ))}
             </div>
+
+            {/* Video Demo Button */}
+            {tour.demoVideo && (
+              <div className="mt-4">
+                <Button 
+                  variant="outline" 
+                  className="w-full"
+                  onClick={() => setShowVideo(true)}
+                >
+                  <Video className="w-4 h-4 mr-2" />
+                  Guarda Video Demo
+                </Button>
+              </div>
+            )}
           </motion.div>
 
           {/* Tour Details */}
@@ -183,7 +220,12 @@ const TourDetail = () => {
                       Prenota Ora
                     </Link>
                   </Button>
-                  <Button size="lg" variant="outline" className="w-full">
+                  <Button 
+                    size="lg" 
+                    variant="outline" 
+                    className="w-full"
+                    onClick={() => setShowVideo(true)}
+                  >
                     <Play className="w-5 h-5 mr-2" />
                     Prova Demo Gratuita
                   </Button>
@@ -219,6 +261,54 @@ const TourDetail = () => {
             </CardContent>
           </Card>
         </motion.div>
+
+        {/* Image Modal */}
+        {selectedImage && (
+          <div className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4">
+            <div className="relative max-w-4xl max-h-full">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="absolute top-4 right-4 z-10 bg-black/50 hover:bg-black/70 text-white"
+                onClick={() => setSelectedImage(null)}
+              >
+                <X className="w-6 h-6" />
+              </Button>
+              <img
+                src={selectedImage}
+                alt={tour.title}
+                className="max-w-full max-h-full object-contain rounded-lg"
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Video Modal */}
+        {showVideo && tour.demoVideo && (
+          <div className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4">
+            <div className="relative max-w-4xl max-h-full w-full">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="absolute top-4 right-4 z-10 bg-black/50 hover:bg-black/70 text-white"
+                onClick={() => setShowVideo(false)}
+              >
+                <X className="w-6 h-6" />
+              </Button>
+              <div className="aspect-video w-full">
+                <video
+                  className="w-full h-full rounded-lg"
+                  controls
+                  autoPlay
+                  preload="metadata"
+                >
+                  <source src={tour.demoVideo} type="video/mp4" />
+                  Il tuo browser non supporta il tag video.
+                </video>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </Layout>
   );
